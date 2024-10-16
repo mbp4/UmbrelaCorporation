@@ -1,10 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <title>Grafico</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización de Datos de Cáncer</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #loader {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #3B82F6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
-<body>
+
+<body class="bg-gray-900 text-white font-sans leading-normal tracking-normal">
+
+<div class="container mx-auto p-4">
+    <h1 class="text-4xl font-bold mb-6 text-center text-blue-400">Datos del Cáncer de Mama</h1>
+    <div class="flex justify-center mb-4">
+        <button id="loadDataBtn"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">Cargar Datos</button>
+        <button id="stopDataBtn"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Detener Datos</button>
+    </div>
+
+    <div id="loader" class="hidden mx-auto"></div>
+
+    <canvas id="chart" width="400" height="200" class="hidden mt-4"></canvas>
+</div>
+
+<script>
+    const ctx = document.getElementById('chart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Valores Generados',
+                data: [],
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4, // Curvas suaves
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    },
+                    ticks: {
+                        color: '#ffffff'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    },
+                    ticks: {
+                        color: '#ffffff'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: '#ffffff'
+                    },
+                },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: '#3B82F6'
+                }
+            }
+        }
+    });
+
+    let updateInterval; //Variable global para el intervalo
+
+    //Función para actualizar el gráfico
+    function updateChart() {
+        fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                chart.data.labels = data.map((_, index) => index + 1);
+                chart.data.datasets[0].data = data;
+                chart.update();
+            });
+    }
+
+    //Iniciar la generación de datos y actualizar el gráfico periódicamente
+    document.getElementById('loadDataBtn').addEventListener('click', () => {
+        document.getElementById('chart').classList.remove('hidden');
+        document.getElementById('loader').classList.remove('hidden');
+        fetch('/start').then(() => {
+            //Actualizar los datos cada segundo
+            updateChart();
+            updateInterval = setInterval(updateChart, 1000); // Guardamos el intervalo en la variable global
+            document.getElementById('loader').classList.add('hidden');
+        });
+    });
+
+    //Detener la generación de datos y el intervalo de actualización
+    document.getElementById('stopDataBtn').addEventListener('click', () => {
+        fetch('/stop').then(() => {
+            clearInterval(updateInterval); // Detener el intervalo de actualización
+            console.log("Generación de datos detenida.");
+        });
+    });
+</script>
 
 </body>
+
 </html>

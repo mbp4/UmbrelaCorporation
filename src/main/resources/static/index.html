@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualización de Datos de Cáncer</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<h1>Datos del Cáncer de Mama</h1>
+<button id="loadDataBtn">Cargar Datos</button>
+<button id="stopDataBtn">Detener Datos</button>
+<canvas id="chart" width="400" height="200" style="display:none;"></canvas>
+
+<script>
+  // Inicializar gráfico
+  const ctx = document.getElementById('chart').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Valores Generados',
+        data: [],
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Función para actualizar el gráfico con los datos obtenidos del backend
+  function updateChart() {
+    fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+              chart.data.labels = data.map((_, index) => index + 1); // Índices como etiquetas
+              chart.data.datasets[0].data = data; // Cargar los valores
+              chart.update(); // Actualizar gráfico
+            });
+  }
+
+  // Mostrar el gráfico al hacer clic en el botón de cargar datos
+  document.getElementById('loadDataBtn').addEventListener('click', () => {
+    document.getElementById('chart').style.display = 'block'; // Mostrar canvas
+    fetch('/start'); // Iniciar generación de datos
+    updateChart(); // Cargar datos iniciales
+    setInterval(updateChart, 1000); // Actualizar cada segundo
+  });
+
+  // Detener la generación de datos al hacer clic en el botón de detener datos
+  document.getElementById('stopDataBtn').addEventListener('click', () => {
+    fetch('/stop'); // Detener generación de datos
+    console.log("Generación de datos detenida.");
+  });
+</script>
+</body>
+</html>
+

@@ -31,7 +31,7 @@ public class ServicioDataset {
             String[] line;
             while ((line = reader.readNext()) != null) {
                 // Asumimos que el valor que deseas obtener está en la primera columna
-                double value = Double.parseDouble(line[0]); // Cambia el índice si el valor está en otra columna
+                double value = Double.parseDouble(line[1]); // Cambia el índice si el valor está en otra columna
                 dataset.add(value);
             }
         } catch (IOException e) {

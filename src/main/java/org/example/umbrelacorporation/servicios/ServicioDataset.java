@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class ServicioDataset {
 
     private List<Double> data = new ArrayList<>();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(9);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private boolean running = false; // Controlar si el proceso está en ejecución
     private List<Double> dataset = new ArrayList<>(); // Para almacenar los valores del CSV
 
@@ -49,7 +49,7 @@ public class ServicioDataset {
                     // Obtenemos un valor del dataset de manera cíclica
                     double newValue = dataset.remove(0); // Obtener el primer valor y eliminarlo
                     data.add(newValue);
-                    if (data.size() > 700) {
+                    if (data.size() > 50) { // Limitar los datos a 50 puntos
                         data.remove(0);
                     }
                     System.out.println("Nuevo dato generado: " + newValue);

@@ -13,6 +13,9 @@
 <canvas id="chart" width="400" height="200" style="display:none;"></canvas>
 
 <script>
+  let intervalId;
+  let isGenerating = false;
+
   // Inicializar gráfico
   const ctx = document.getElementById('chart').getContext('2d');
   const chart = new Chart(ctx, {
@@ -48,18 +51,24 @@
 
   // Mostrar el gráfico al hacer clic en el botón de cargar datos
   document.getElementById('loadDataBtn').addEventListener('click', () => {
-    document.getElementById('chart').style.display = 'block'; // Mostrar canvas
-    fetch('/start'); // Iniciar generación de datos
-    updateChart(); // Cargar datos iniciales
-    setInterval(updateChart, 1000); // Actualizar cada segundo
+    if (!isGenerating) {
+      document.getElementById('chart').style.display = 'block'; // Mostrar canvas
+      fetch('/start'); // Iniciar generación de datos
+      updateChart(); // Cargar datos iniciales
+      intervalId = setInterval(updateChart, 1000); // Actualizar cada segundo
+      isGenerating = true;
+    }
   });
 
   // Detener la generación de datos al hacer clic en el botón de detener datos
   document.getElementById('stopDataBtn').addEventListener('click', () => {
-    fetch('/stop'); // Detener generación de datos
-    console.log("Generación de datos detenida.");
+    if (isGenerating) {
+      clearInterval(intervalId); // Detener actualización periódica
+      fetch('/stop'); // Detener generación de datos
+      console.log("Generación de datos detenida.");
+      isGenerating = false;
+    }
   });
 </script>
 </body>
 </html>
-

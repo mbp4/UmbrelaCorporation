@@ -18,20 +18,19 @@ import java.util.concurrent.TimeUnit;
 public class ServicioDataset {
 
     private List<Double> data = new ArrayList<>();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private boolean running = false; // Controlar si el proceso está en ejecución
-    private List<Double> dataset = new ArrayList<>(); // Para almacenar los valores del CSV
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(9);
+    private boolean running = false;
+    private List<Double> dataset = new ArrayList<>();
 
     public ServicioDataset() {
-        loadDataset(); // Cargar datos del CSV al iniciar el servicio
+        loadDataset();
     }
 
     private void loadDataset() {
         try (CSVReader reader = new CSVReader(new FileReader("src/main/resources/dataset/breast-cancer-wisconsin.data"))) {
             String[] line;
             while ((line = reader.readNext()) != null) {
-                // Asumimos que el valor que deseas obtener está en la primera columna
-                double value = Double.parseDouble(line[1]); // Cambia el índice si el valor está en otra columna
+                double value = Double.parseDouble(line[1]);
                 dataset.add(value);
             }
         } catch (IOException e) {
@@ -43,31 +42,30 @@ public class ServicioDataset {
 
     public void startDataGeneration() {
         if (!running) {
-            running = true; // Marcar como en ejecución
+            running = true;
             scheduler.scheduleAtFixedRate(() -> {
                 if (!dataset.isEmpty()) {
-                    // Obtenemos un valor del dataset de manera cíclica
-                    double newValue = dataset.remove(0); // Obtener el primer valor y eliminarlo
+                    double newValue = dataset.remove(0);
                     data.add(newValue);
-                    if (data.size() > 50) { // Limitar los datos a 50 puntos
+                    if (data.size() > 700) {
                         data.remove(0);
                     }
                     System.out.println("Nuevo dato generado: " + newValue);
                 } else {
                     System.out.println("No hay más datos en el dataset.");
-                    stopDataGeneration(); // Detener si no hay más datos
+                    stopDataGeneration();
                 }
-            }, 0, 1, TimeUnit.SECONDS); // Actualizar cada segundo
+            }, 0, 1, TimeUnit.SECONDS);
         }
     }
 
     public void stopDataGeneration() {
-        running = false; // Marcar como no en ejecución
-        scheduler.shutdownNow(); // Detener el scheduler
+        running = false;
+        scheduler.shutdownNow();
         System.out.println("Generación de datos detenida.");
     }
 
     public List<Double> getData() {
-        return new ArrayList<>(data); // Devuelve una copia de los datos
+        return new ArrayList<>(data);
     }
 }

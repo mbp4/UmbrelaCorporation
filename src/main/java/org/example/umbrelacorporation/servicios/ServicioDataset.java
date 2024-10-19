@@ -50,7 +50,7 @@ public class ServicioDataset {
                     if (data.size() > 700) {
                         data.remove(0);
                     }
-                    System.out.println("Nuevo dato generado: " + newValue);
+                    System.out.println("Nuevo dato generado con valor: " + newValue);
                 } else {
                     System.out.println("No hay más datos en el dataset.");
                     stopDataGeneration();

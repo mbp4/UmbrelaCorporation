@@ -9,24 +9,24 @@
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background-color: #1E293B;
+      background-color: #0F172A;
       color: #ffffff;
     }
 
     .btn {
-      @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition ease-in-out duration-200;
+      @apply bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-6 rounded-lg transition ease-in-out duration-300 shadow-lg;
     }
 
     #chartContainer {
-      @apply max-w-4xl mx-auto my-8 p-6 bg-gray-800 shadow-lg rounded-lg;
+      @apply max-w-3xl mx-auto my-8 p-8 bg-gray-900 shadow-xl rounded-lg border border-indigo-700;
     }
 
     .loader {
       border: 4px solid rgba(255, 255, 255, 0.1);
-      border-left-color: #3B82F6;
+      border-left-color: #5B21B6;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       animation: spin 1s linear infinite;
     }
 
@@ -38,17 +38,17 @@
     canvas {
       display: block;
       width: 100% !important;
-      height: 300px !important;
+      height: 400px !important;
     }
   </style>
 </head>
 <body>
 
-<div class="container mx-auto text-center">
-  <h1 class="text-4xl font-semibold mb-6 text-blue-400">Visualización de Datos de Cáncer de Mama</h1>
-  <div class="flex justify-center space-x-4">
+<div class="container mx-auto text-center p-6">
+  <h1 class="text-5xl font-bold mb-8 text-purple-500">Visualización de Datos de Cáncer de Mama</h1>
+  <div class="flex justify-center space-x-4 mb-6">
     <button id="loadDataBtn" class="btn">Cargar Datos</button>
-    <button id="stopDataBtn" class="btn bg-red-500 hover:bg-red-700">Detener Datos</button>
+    <button id="stopDataBtn" class="btn bg-red-600 hover:bg-red-800">Detener Datos</button>
   </div>
 
   <div id="chartContainer" class="hidden">
@@ -68,16 +68,16 @@
       datasets: [{
         label: 'Valores Generados',
         data: [],
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderWidth: 2,
-        pointBackgroundColor: 'rgba(255, 99, 132, 1)', //Color de los puntos del grafico
-        pointBorderColor: 'rgba(255, 255, 255, 1)', //Contorno de los puntos
-        pointHoverRadius: 7, //Modificación cuando pasas el ratón por encima
+        borderColor: 'rgba(99, 102, 241, 1)',
+        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+        borderWidth: 3,
+        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+        pointBorderColor: 'rgba(255, 255, 255, 1)',
+        pointHoverRadius: 8,
         pointHoverBackgroundColor: 'rgba(255, 206, 86, 1)',
         pointHoverBorderColor: 'rgba(220, 220, 220, 1)',
         fill: true,
-        tension: 0.4, // Líneas suavizadas
+        tension: 0.4,
       }]
     },
     options: {
@@ -88,12 +88,12 @@
           labels: {
             color: '#ffffff',
             font: {
-              size: 16,
+              size: 18,
             }
           }
         },
         tooltip: {
-          backgroundColor: 'rgba(30, 41, 59, 0.8)', // Fondo oscuro para tooltips
+          backgroundColor: 'rgba(30, 41, 59, 0.8)',
           titleColor: '#ffffff',
           bodyColor: '#ffffff',
           callbacks: {
@@ -136,9 +136,9 @@
     fetch('/data')
             .then(response => response.json())
             .then(data => {
-              chart.data.labels = data.map((_, index) => index + 1); //Índice de las etiquetas de los datos
-              chart.data.datasets[0].data = data; //Cargar los valores
-              chart.update(); //Actualizar gráfico
+              chart.data.labels = data.map((_, index) => index + 1);
+              chart.data.datasets[0].data = data;
+              chart.update();
             });
   }
 
@@ -149,7 +149,7 @@
     fetch('/start')
             .then(() => {
               updateChart();
-              setInterval(updateChart, 1000); //Actualizar cada segundo
+              setInterval(updateChart, 1000);
               document.getElementById('loader').classList.add('hidden');
             });
   });

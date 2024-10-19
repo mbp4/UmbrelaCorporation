@@ -47,7 +47,7 @@ public class ServicioDataset {
                 if (!dataset.isEmpty()) {
                     double newValue = dataset.remove(0);
                     data.add(newValue);
-                    if (data.size() > 700) {
+                    if (data.size() > 50) {
                         data.remove(0);
                     }
                     System.out.println("Nuevo dato generado con valor: " + newValue);
@@ -61,7 +61,7 @@ public class ServicioDataset {
 
     public void stopDataGeneration() {
         running = false;
-        scheduler.shutdownNow();
+        scheduler.shutdown();
         System.out.println("Generación de datos detenida.");
     }
 
